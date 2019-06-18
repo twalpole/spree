@@ -115,6 +115,7 @@ module CapybaraExt
 end
 
 def wait_for(options = {})
+  return false
   default_options = { error: nil, seconds: 5 }.merge(options)
 
   Selenium::WebDriver::Wait.new(timeout: default_options[:seconds]).until { yield }
