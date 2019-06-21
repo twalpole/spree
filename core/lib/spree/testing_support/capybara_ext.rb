@@ -13,14 +13,14 @@ module CapybaraExt
   end
 
   def click_icon(type)
-    find(".icon-#{type}").click
+    first(".icon-#{type}").click
   end
 
   def within_row(num, &block)
     if RSpec.current_example.metadata[:js]
-      within("table.table tbody tr:nth-child(#{num})", &block)
+      within("table.table tbody tr:nth-child(#{num})", match: :first, &block)
     else
-      within(:xpath, all('table.table tbody tr')[num - 1].path, &block)
+      within(all('table.table tbody tr')[num - 1], &block)
     end
   end
 
@@ -49,7 +49,7 @@ module CapybaraExt
   end
 
   def select2(value, options)
-    label = find(:label, options[:from])
+    label = find(:label, options[:from], class: '!select2-offscreen')
     within label.first(:xpath, './/..') do
       options[:from] = "##{find('.select2-container')['id']}"
     end
@@ -73,7 +73,7 @@ module CapybaraExt
 
   def select_select2_result(value)
     # results are in a div appended to the end of the document
-    page.document.find('div.select2-result-label', text: %r{#{Regexp.escape(value)}}i).click
+    page.document.find('div.select2-result-label', match: :first, text: %r{#{Regexp.escape(value)}}i).click
   end
 
   # arg delay in seconds
@@ -98,7 +98,7 @@ rescue Selenium::WebDriver::Error::TimeOutError
 end
 
 Capybara.configure do |config|
-  config.match = :prefer_exact
+  config.match = :smart
   config.ignore_hidden_elements = true
 end
 
